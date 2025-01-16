@@ -50,8 +50,19 @@ void loop() {
 
         display->setFont();
         display->setCursor(5, 35);
+
         unsigned long sec = millis() / 1000;
-        display->println("Counter: " + String(sec) + "sec");
+        unsigned int days = sec / 86400; // 1 den = 86400 sekund
+        unsigned int hours = (sec % 86400) / 3600; // Zbytek po dnech, přepočítat na hodiny
+        unsigned int minutes = (sec % 3600) / 60;  // Zbytek po hodinách, přepočítat na minuty
+        unsigned int seconds = sec % 60;
+
+        String timeString = String(days) + ":" +
+                            String(hours) + ":" +
+                            String(minutes) + ":" +
+                            String(seconds);
+
+        display->println("Active: " + timeString);
         display->display();
     }
 }
