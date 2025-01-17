@@ -4,17 +4,23 @@
 #include <Adafruit_SSD1306.h>
 #include <Fonts/FreeSans9pt7b.h>
 #include <DHT.h>
+#include "utils/NeoPixelManager.h"
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
+
+#define NUMPIXELS 6 // Počet LED
+#define STRIP_PIN D5 // Pin (D5 = GPIO14 pro ESP8266)
+
+float humidity, temperature;
 
 // D2 (GIPO4)
 DHT my_sensor(4, DHT22);
 
 Adafruit_SSD1306 *display = nullptr; // Použijeme ukazatel, původní objekt neexistuje na globální úrovni
 // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-
-float humidity, temperature;
+// WS2811
+NeoPixelManager neoPixel(STRIP_PIN, NUMPIXELS);
 
 void setup() {
     // Wire.begin(4,5);
@@ -25,9 +31,13 @@ void setup() {
 
     // zapnutí senzoru
     my_sensor.begin();
+
+    // práce s pásekm
+    neoPixel.begin();  // Inicializace NeoPixel
 }
 
 void loop() {
+
     // reaguji každou sekundu
     if (millis() % 1000 == 0) {
         humidity = my_sensor.readHumidity();
@@ -64,5 +74,8 @@ void loop() {
 
         display->println("Active: " + timeString);
         display->display();
+
+
     }
+    neoPixel.rainbowCycle(5);         // Efekt duha
 }
